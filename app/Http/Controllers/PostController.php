@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -14,6 +14,7 @@ class PostController extends Controller
     public function index()
     {
         //
+        return Post::get();
     }
 
     /**
@@ -25,6 +26,13 @@ class PostController extends Controller
     public function store(Request $request)
     {
         //
+        $post = new Post();
+        $post->title = $request->title;
+        $post->body = $request->body;
+        $post->user_id = $request->user_id;
+        $post->save();
+
+        return response()->json("Post Created");
     }
 
     /**
@@ -36,6 +44,7 @@ class PostController extends Controller
     public function show($id)
     {
         //
+        return Post::findOrFail($id);
     }
 
     /**
@@ -48,6 +57,13 @@ class PostController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $post = Post::findOrFail($id);
+        $post->title = $request->title;
+        $post->body = $request->body;
+        $post->user_id = $request->user_id;
+        $post->save();
+
+        return response()->json(["message" => "Post updated"]);
     }
 
     /**
@@ -59,5 +75,11 @@ class PostController extends Controller
     public function destroy($id)
     {
         //
+        $isDeleted = Post::destroy($id);
+        if($isDeleted == 1){
+            return response()->json(['message' => 'deleted'],200);
+        }else{
+            return response()->json(['message' => 'ID NOT FOUND'],404);
+        }
     }
 }
